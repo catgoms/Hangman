@@ -6,7 +6,7 @@ namespace Hangman
     {
         static void Main(string[] args)
         {
-            String[] words = new String[] {
+            string[] words = new string[] {
                 "apple",
                 "dictionary",
                 "television",
@@ -17,45 +17,164 @@ namespace Hangman
 
             Console.WriteLine("Let's play a Hangman Game!\n");
 
-            String chosenWord = "apple";
+            string chosenWord = "apple";
 
-            HangmanGame(chosenWord);
+            bool play = true;
 
+            while (play) {
+                play = HangmanGame(chosenWord);
+            }
 
-            Console.WriteLine("\n");
+            Console.WriteLine("\n\nThank you for playing! Bye Bye");
         }
 
-        static void HangmanGame(String chosenWord)
+        static bool HangmanGame(string chosenWord)
         {
-            String[] wordDisplay = new string[] { };
+            string[] wordDisplay = new string[chosenWord.Length];
 
-            for(int i = 0; i < chosenWord.Length; i++) {
-                wordDisplay[i] = " _";
-                Console.Write(wordDisplay[i]);
+            for (int i = 0; i < chosenWord.Length; i++) {
+                wordDisplay[i] = "_";
             }
 
             bool guessed = false;
+            int attempt = 0;
 
-            while(!guessed) {
-                Console.WriteLine("\nType the alphabet or the word for a guess: ");
-                String guess = Console.ReadLine();
+            while(!guessed && attempt < 8) {
+                for (int i = 0; i < chosenWord.Length; i++) {
+                    Console.Write(" " + wordDisplay[i]);
+                }
+
+                Console.Write("\n\nType an alphabet or the word for a guess: ");
+                string guess = getInput();
 
                 if (guess.Length > 1 && chosenWord == guess) {
-                    Console.WriteLine("Correct!");
-                    Console.WriteLine("Do you want to play the game again? (Y/N): ");
-                    String restart = Console.ReadLine();
                     guessed = true;
                 } else if (guess.Length == 1 && chosenWord.Contains(guess)) {
-                    int index = chosenWord.IndexOf(guess);
-                    wordDisplay[index] = " " + guess;
+                    for (int i = 0; i < chosenWord.Length; i++) {
+                        if (chosenWord[i] == Convert.ToChar(guess)) {
+                            wordDisplay[i] = " " + guess;
+                        }
+                    }
                 } else {
+                    Console.WriteLine(DrawHangman(attempt));
+                    attempt++;
                     // draw hangman
                 }
             }
 
-            
+            if(guessed) {
+                Console.WriteLine("Correct!");
+            } else {
+                Console.WriteLine("Game Over! The man is hanged!");
+                Console.WriteLine("The answer was " + chosenWord);
+            }
 
+            Console.Write("\nDo you want to play the game again? (Y/N): ");
+            string restart = "";
+            while (true) {
+                restart = Console.ReadLine().ToLower();
+                if (restart == "y") {
+                    return true;
+                } else if (restart == "n") {
+                    return false;
+                } else {
+                    Console.Write("Invalid input, please type Y or N: ");
+                }
+            }
 
+        }
+
+        static string getInput()
+        {
+            string input = "";
+
+            do {
+                input = Console.ReadLine().ToLower();
+                if (string.IsNullOrEmpty(input)) {
+                    Console.Write("Empty input, please type something: ");
+                }
+            } while (string.IsNullOrEmpty(input));
+            return input;
+        }
+
+        static string DrawHangman(int attempt)
+        {
+            string[] hangman = new string[]
+            {
+                " ___________\n" +
+                "           |\n" +
+                "           |\n" +
+                "           |\n" +
+                "           |\n" +
+                "           |\n" +
+                "           |\n" +
+                "           |\n",
+
+                " ___________\n" +
+                "           |\n" +
+                " O         |\n" +
+                "           |\n" +
+                "           |\n" +
+                "           |\n" +
+                "           |\n" +
+                "           |\n",
+
+                " ___________\n" +
+                "           |\n" +
+                " O         |\n" +
+                " |         |\n" +
+                " |         |\n" +
+                "           |\n" +
+                "           |\n" +
+                "           |\n",
+
+                " ___________\n" +
+                "           |\n" +
+                " O         |\n" +
+                "/|         |\n" +
+                " |         |\n" +
+                "           |\n" +
+                "           |\n" +
+                "           |\n",
+
+                " ___________\n" +
+                "           |\n" +
+                " O         |\n" +
+                "/|\\        |\n" +
+                " |         |\n" +
+                "           |\n" +
+                "           |\n" +
+                "           |\n",
+
+                " ___________\n" +
+                "           |\n" +
+                " O         |\n" +
+                "/|\\        |\n" +
+                " |         |\n" +
+                "/          |\n" +
+                "           |\n" +
+                "           |\n",
+
+                " ___________\n" +
+                "           |\n" +
+                " O         |\n" +
+                "/|\\        |\n" +
+                " |         |\n" +
+                "/ \\        |\n" +
+                "           |\n" +
+                "           |\n",
+
+                " ___________\n" +
+                " |         |\n" +
+                " O         |\n" +
+                "/|\\        |\n" +
+                " |         |\n" +
+                "/ \\        |\n" +
+                "           |\n" +
+                "           |\n"
+            };
+
+            return hangman[attempt];
         }
     }
 }
